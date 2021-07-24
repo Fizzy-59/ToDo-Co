@@ -14,3 +14,11 @@
 !var/SymfonyRequirements.php
 /vendor/
 /public/bundles/
+
+.idea/modules.xml
+
+.idea/symfony2.xml
+
+.idea/td.iml
+
+.idea/workspace.xml
