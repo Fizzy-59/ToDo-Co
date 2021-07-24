@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,21 +14,22 @@ class UserController extends AbstractController
     #[Route('/users', name: "user_list")]
     public function listAction()
     {
-        return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository(User::class)->findAll()]);
+        return $this->render('user/list.html.twig',
+            ['users' => $this->getDoctrine()->getRepository(User::class)->findAll()]);
     }
 
     #[Route('/users/create', name: "user_create")]
-    public function createAction(Request $request)
+    public function create(Request $request, UserPasswordHasherInterface $passwordEncoder)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
+            $password = $form->get('password')->getData();
+            $encodedPassword = $passwordEncoder->hashPassword($user, $password);
+            $user->setPassword($encodedPassword);
 
             $em->persist($user);
             $em->flush();
