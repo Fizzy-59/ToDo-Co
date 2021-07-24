@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,9 +75,21 @@ class TaskController extends AbstractController
         return $this->redirectToRoute('task_list');
     }
 
+    /**
+     * @param Task $task
+     * @return RedirectResponse
+     */
     #[Route('/tasks/{id}/delete', name: "task_delete")]
-    public function deleteTaskAction(Task $task)
+    #[ParamConverter('id', class: Task::class)]
+    public function deleteTask(Task $task): RedirectResponse
     {
+        $currentUser = $this->getUser();
+        $taskUser = $task->getUser();
+        if($currentUser !== $taskUser) {
+            $this->addFlash('error', 'La tâche ne peet-être supprimé que par son propriétaire.');
+            return $this->redirectToRoute('task_list');
+        }
+
         $em = $this->getDoctrine()->getManager();
         $em->remove($task);
         $em->flush();
