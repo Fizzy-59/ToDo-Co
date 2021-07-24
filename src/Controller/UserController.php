@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends AbstractController
 {
     #[Route('/users', name: "user_list")]
-    public function listAction()
+    public function listUsers()
     {
         return $this->render('user/list.html.twig',
             ['users' => $this->getDoctrine()->getRepository(User::class)->findAll()]);
@@ -35,7 +35,6 @@ class UserController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été ajouté.");
-
             return $this->redirectToRoute('user_list');
         }
 
@@ -43,20 +42,20 @@ class UserController extends AbstractController
     }
 
     #[Route('/users/{id}/edit', name: "user_edit")]
-    public function editAction(User $user, Request $request)
+    public function editUser(User $user, Request $request, UserPasswordHasherInterface $passwordEncoder)
     {
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
+            $password = $form->get('password')->getData();
+            $encodedPassword = $passwordEncoder->hashPassword($user, $password);
+            $user->setPassword($encodedPassword);
 
             $this->getDoctrine()->getManager()->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
-
             return $this->redirectToRoute('user_list');
         }
 
