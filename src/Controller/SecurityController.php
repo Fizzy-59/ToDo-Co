@@ -10,8 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SecurityController extends AbstractController
 {
+    /**
+     * @param AuthenticationUtils $authenticationUtils
+     * @return Response
+     */
     #[Route('/login', name: "app_login")]
-    public function loginCheck(AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
          if ($this->getUser()) {
              return $this->redirectToRoute('app_homepage');
@@ -23,7 +27,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/logout', name: "app_logout")]
-    public function logoutCheck(): void
+    public function logout(): void
     {
         // This code is never executed.
     }
