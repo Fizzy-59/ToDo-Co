@@ -100,8 +100,15 @@ class TaskController extends AbstractController
     {
         $currentUser = $this->getUser();
         $taskUser = $task->getUser();
-        if($currentUser !== $taskUser) {
-            $this->addFlash('error', 'La tâche ne peet-être supprimé que par son propriétaire.');
+        $role = $currentUser->getRoles();
+
+        if($taskUser === null && $role[0] !== "ROLE_ADMIN") {
+            $this->addFlash('error', 'Une tâche anonyme ne peut-être supprimé que par un administrateur.');
+            return $this->redirectToRoute('task_list');
+        }
+
+        if($currentUser !== $taskUser && $taskUser !== null) {
+            $this->addFlash('error', 'La tâche ne peut-être supprimé que par son propriétaire.');
             return $this->redirectToRoute('task_list');
         }
 
