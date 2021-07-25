@@ -4,7 +4,7 @@ Creation of a community site for sharing snowboard figures with the Symfony fram
 
 ## Installation
 
-1. Clone or download the GitHub repository in the desired folder: 
+1. Clone or download the GitHub repository in the desired folder: https://github.com/Fizzy-59/ToDo-Co.git
 2. Create and configure .env file for the database connection, SMTP server or mail address in the root directory
    https://symfony.com/doc/current/configuration.html
 3. Install dependencies with : "composer install"
