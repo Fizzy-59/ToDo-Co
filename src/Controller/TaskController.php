@@ -4,23 +4,30 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 class TaskController extends AbstractController
 {
+    /**
+     * @return Response
+     */
     #[Route('/tasks', name: "task_list")]
-    public function listAction()
+    public function getTasks(): Response
     {
         return $this->render('task/list.html.twig',
             ['tasks' => $this->getDoctrine()->getRepository(Task::class)->findAll()]);
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
     #[Route('/tasks/create', name: "task_create")]
-    public function createAction(Request $request)
+    public function createTask(Request $request): RedirectResponse|Response
     {
         $user = $this->getUser();
         $task = new Task();
@@ -43,8 +50,13 @@ class TaskController extends AbstractController
         return $this->render('task/create.html.twig', ['form' => $form->createView()]);
     }
 
+    /**
+     * @param Task $task
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
     #[Route('/tasks/{id}/edit', name: "task_edit")]
-    public function editAction(Task $task, Request $request)
+    public function editTask(Task $task, Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(TaskType::class, $task);
 
@@ -64,8 +76,12 @@ class TaskController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Task $task
+     * @return RedirectResponse
+     */
     #[Route('/tasks/{id}/toggle', name: "task_toggle")]
-    public function toggleTaskAction(Task $task)
+    public function toggleTask(Task $task): RedirectResponse
     {
         $task->toggle(!$task->isDone());
         $this->getDoctrine()->getManager()->flush();
@@ -80,7 +96,6 @@ class TaskController extends AbstractController
      * @return RedirectResponse
      */
     #[Route('/tasks/{id}/delete', name: "task_delete")]
-    #[ParamConverter('id', class: Task::class)]
     public function deleteTask(Task $task): RedirectResponse
     {
         $currentUser = $this->getUser();
