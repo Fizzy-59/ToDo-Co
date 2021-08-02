@@ -2,11 +2,12 @@
 
 namespace App\Tests\Controller;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SecurityControllerTest extends WebTestCase
 {
-    public function testLoginPage(): void
+    public function testDisplayLoginPage(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/login');
@@ -15,7 +16,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertSelectorTextContains('button', 'Connection');
     }
 
-    public function testLogin(): void
+    public function testSuccessLogin(): void
     {
         $client = static::createClient();
         $crawler = $client->request('GET', '/login');
@@ -26,12 +27,21 @@ class SecurityControllerTest extends WebTestCase
         $form['password'] = 'test1234';
         $client->submit($form);
 
-         $this->assertResponseRedirects('/tasks', 302);
-         $this->assertSelectorTextContains('button', 'Créer une tâche');
+        $this->assertResponseRedirects('/', 302);
     }
 
-    public function testLogout(): void
+    public function testFailLogin(): void
     {
+        $client = static::createClient();
+        $crawler = $client->request('GET', '/login');
 
+        $buttonCrawlerNode = $crawler->selectButton('Connection');
+        $form = $buttonCrawlerNode->form();
+        $form['username'] = 'username';
+        $form['password'] = 'test1234';
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/login', 302);
     }
+
 }
