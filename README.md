@@ -1,6 +1,6 @@
 # Todo&Co
 
-API developed in PHP with :
+Application developed in PHP with :
 - [Symfony Framework](https://symfony.com/)
 - [Doctrine ORM](https://www.doctrine-project.org/)
 
@@ -34,7 +34,6 @@ Application to manage daily tasks.
 ### Testing
  - source ~/.bash_profile
  - php8 /usr/local/bin/phpunit
- - php bin/phpunit tests/
  - php bin/console doctrine:fixtures:load --env=test
- - `php bin/console doctrine:database:create --env=test`
- - `php bin/console doctrine:schema:update --force --env=test`
+ - php bin/console doctrine:database:create --env=test
+ - php bin/console doctrine:schema:update --force --env=test
