@@ -6,12 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserControllerTest extends WebTestCase
 {
-    public function testSomething(): void
+    public function testCreateUser(): void
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/');
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('h1', 'Hello World');
+    }
+
+    public function testDisplayListOfUsers(): void
+    {
+
     }
 }
