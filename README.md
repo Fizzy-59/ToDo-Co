@@ -1,6 +1,10 @@
 # Todo&Co
 
-Creation of a community site for sharing snowboard figures with the Symfony framework.
+API developed in PHP with :
+- [Symfony Framework](https://symfony.com/)
+- [Doctrine ORM](https://www.doctrine-project.org/)
+
+Application to manage daily tasks.
 
 ## Installation
 
@@ -15,14 +19,22 @@ Creation of a community site for sharing snowboard figures with the Symfony fram
 
 ### CLI Common commands
 
-php bin/console make:entity
-php bin/console make:migration
-php bin/console doctrine:migrations:migrate
+- php bin/console make:entity
+- php bin/console make:migration
+- php bin/console doctrine:migrations:migrate
 
-composer dump-autoload
+- composer dump-autoload
 
-php bin/console doctrine:database:drop --force
-php bin/console doctrine:database:create
-php bin/console doctrine:schema:update --force
+- php bin/console doctrine:database:drop --force
+- php bin/console doctrine:database:create
+- php bin/console doctrine:schema:update --force
 
-symfony server:start
+- symfony server:start
+
+### Testing
+ - source ~/.bash_profile
+ - php8 /usr/local/bin/phpunit
+ - php bin/phpunit tests/
+ - php bin/console doctrine:fixtures:load --env=test
+ - `php bin/console doctrine:database:create --env=test`
+ - `php bin/console doctrine:schema:update --force --env=test`
