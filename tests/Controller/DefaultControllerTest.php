@@ -20,7 +20,6 @@ class DefaultControllerTest extends WebTestCase
     public function testConnectedDisplayHomePage(): void
     {
         $client = static::createClient();
-
         $userRepository = static::$container->get(UserRepository::class);
         $testUser = $userRepository->findOneBy(['username' => 'username 0']);
         $client->loginUser($testUser);

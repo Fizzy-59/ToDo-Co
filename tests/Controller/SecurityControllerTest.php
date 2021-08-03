@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SecurityControllerTest extends WebTestCase
@@ -41,6 +42,18 @@ class SecurityControllerTest extends WebTestCase
         $client->submit($form);
 
         $this->assertResponseRedirects('/login', 302);
+    }
+
+    public function testAlreadyLoggedLogin(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => 'username 0']);
+        $client->loginUser($testUser);
+
+        $crawler = $client->request('GET', '/login');
+        $this->assertResponseRedirects('/', 302);
     }
 
 }
