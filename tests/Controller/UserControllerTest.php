@@ -22,6 +22,29 @@ class UserControllerTest extends WebTestCase
         $form['user[password][first]'] = 'test1234';
         $form['user[password][second]'] = 'test1234';
         $form['user[email]'] = 'username@live.fr';
+        $form['user[roles][0]']->select('ROLE_USER');
+        $client->submit($form);
+
+        $this->assertResponseIsSuccessful();
+    }
+
+    public function testEditUser(): void
+    {
+        $client = static::createClient();
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => 'username 0']);
+        $client->loginUser($testUser);
+        $crawler = $client->request('GET', '/users/1/edit');
+        $this->assertResponseIsSuccessful();
+
+        $buttonCrawlerNode = $crawler->selectButton('Modifier');
+        $form = $buttonCrawlerNode->form();
+        $form['user[username]'] = 'username test';
+        $form['user[password][first]'] = 'test1234';
+        $form['user[password][second]'] = 'test1234';
+        $form['user[email]'] = 'username@live.fr';
+        $form['user[roles][0]']->select('ROLE_USER');
+        $form['user[roles][1]']->select('ROLE_ADMIN');
         $client->submit($form);
 
         $this->assertResponseIsSuccessful();
