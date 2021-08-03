@@ -34,6 +34,7 @@ Application to manage daily tasks.
 ### Testing
  - source ~/.bash_profile
  - php8 /usr/local/bin/phpunit
+ - php8 -d memory_limit=5G /usr/local/bin/phpunit
  - php -dxdebug.mode=coverage bin/phpunit --coverage-clover='reports/coverage/coverage.xml' --coverage-html='reports/coverage'
 
  - php bin/console doctrine:fixtures:load --env=test

@@ -2,11 +2,14 @@
 
 namespace App\Tests\Controller;
 
+use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TaskControllerTest extends WebTestCase
 {
+    static public $taskId;
+
     public function testDisplayListOfTasks(): void
     {
         $client = static::createClient();
@@ -41,15 +44,24 @@ class TaskControllerTest extends WebTestCase
         $client->submit($form);
 
         $this->assertResponseRedirects('/tasks', 302);
+
+        $taskRepository = static::$container->get(TaskRepository::class);
+        $testTask = $taskRepository->findBy(array(),array('id'=>'DESC'),1,0);
+        // Need to loop for recover id
+        foreach($testTask as $task) { $id=$task->getId(); }
+        self::$taskId = (string) $id;
     }
 
     public function testDeleteTask(): void
     {
+
         $client = static::createClient();
         $userRepository = static::$container->get(UserRepository::class);
         $testUser = $userRepository->findOneBy(['username' => 'username 0']);
         $client->loginUser($testUser);
-        $crawler = $client->request('GET', '/tasks/26/delete');
+
+        $url = '/tasks/'.self::$taskId.'/delete';
+        $crawler = $client->request('GET', $url);
 
         $this->assertResponseRedirects('/tasks', 302);
     }
