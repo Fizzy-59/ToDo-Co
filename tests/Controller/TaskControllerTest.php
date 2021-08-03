@@ -52,9 +52,27 @@ class TaskControllerTest extends WebTestCase
         self::$taskId = (string) $id;
     }
 
+    public function testEditTask(): void
+    {
+        $client = static::createClient();
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => 'username 0']);
+        $client->loginUser($testUser);
+
+        $url = '/tasks/'.self::$taskId.'/edit';
+        $crawler = $client->request('GET', $url);
+
+        $buttonCrawlerNode = $crawler->selectButton('Modifier');
+        $form = $buttonCrawlerNode->form();
+        $form['task[title]'] = 'in testing title';
+        $form['task[content]'] = 'in testing content';
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/tasks', 302);
+    }
+
     public function testDeleteTask(): void
     {
-
         $client = static::createClient();
         $userRepository = static::$container->get(UserRepository::class);
         $testUser = $userRepository->findOneBy(['username' => 'username 0']);
@@ -66,8 +84,4 @@ class TaskControllerTest extends WebTestCase
         $this->assertResponseRedirects('/tasks', 302);
     }
 
-    public function testDoneTask(): void
-    {
-
-    }
 }
