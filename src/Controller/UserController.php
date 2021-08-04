@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -76,5 +77,14 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/edit.html.twig', ['form' => $form->createView(), 'user' => $user]);
+    }
+
+    #[Route('/users/{id}/delete', name: "user_delete")]
+    public function delete(User $user ,EntityManagerInterface $entityManager)
+    {
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_homepage');
     }
 }

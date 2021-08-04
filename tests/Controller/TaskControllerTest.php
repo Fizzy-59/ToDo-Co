@@ -45,6 +45,7 @@ class TaskControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/tasks', 302);
 
+        // Get the last task id
         $taskRepository = static::$container->get(TaskRepository::class);
         $testTask = $taskRepository->findBy(array(),array('id'=>'DESC'),1,0);
         // Need to loop for recover id
@@ -67,6 +68,19 @@ class TaskControllerTest extends WebTestCase
         $form['task[title]'] = 'in testing title';
         $form['task[content]'] = 'in testing content';
         $client->submit($form);
+
+        $this->assertResponseRedirects('/tasks', 302);
+    }
+
+    public function testDoneTask(): void
+    {
+        $client = static::createClient();
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => 'username 0']);
+        $client->loginUser($testUser);
+
+        $url = '/tasks/'.self::$taskId.'/toggle';
+        $crawler = $client->request('GET', $url);
 
         $this->assertResponseRedirects('/tasks', 302);
     }

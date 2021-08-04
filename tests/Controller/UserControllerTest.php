@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserControllerTest extends WebTestCase
 {
+    private static $userId;
+
     public function testCreateUser(): void
     {
         $client = static::createClient();
@@ -25,7 +27,14 @@ class UserControllerTest extends WebTestCase
         $form['user[roles][0]']->select('ROLE_USER');
         $client->submit($form);
 
-        $this->assertResponseIsSuccessful();
+        // Get the last user id
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findBy(array(),array('id'=>'DESC'),1,0);
+        // Need to loop for recover id
+        foreach($testUser as $user) { $id=$user->getId(); }
+        self::$userId = (string) $id;
+
+        $this->assertResponseRedirects('/users', 302);
     }
 
     public function testEditUser(): void
@@ -34,20 +43,34 @@ class UserControllerTest extends WebTestCase
         $userRepository = static::$container->get(UserRepository::class);
         $testUser = $userRepository->findOneBy(['username' => 'username 0']);
         $client->loginUser($testUser);
-        $crawler = $client->request('GET', '/users/1/edit');
-        $this->assertResponseIsSuccessful();
+
+        $url = '/users/'.self::$userId.'/edit';
+        $crawler = $client->request('GET', $url);
 
         $buttonCrawlerNode = $crawler->selectButton('Modifier');
         $form = $buttonCrawlerNode->form();
-        $form['user[username]'] = 'username test';
+        $form['user[username]'] = 'username modify test';
         $form['user[password][first]'] = 'test1234';
         $form['user[password][second]'] = 'test1234';
         $form['user[email]'] = 'username@live.fr';
-        $form['user[roles][0]']->select('ROLE_USER');
-        $form['user[roles][1]']->select('ROLE_ADMIN');
+        $form['user[roles][0]']->select('ROLE_ADMIN');
         $client->submit($form);
 
-        $this->assertResponseIsSuccessful();
+        $this->assertResponseRedirects('/users', 302);
+    }
+
+    public function testDeleteUSer(): void
+    {
+        $client = static::createClient();
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => 'username 0']);
+        $client->loginUser($testUser);
+
+        // Delete the test User
+        $url = '/users/'.self::$userId.'/delete';
+        $crawler = $client->request('GET', $url);
+
+        $this->assertResponseRedirects('/', 302);
     }
 
     public function testDisplayListOfUsers(): void
