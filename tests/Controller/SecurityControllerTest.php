@@ -56,4 +56,15 @@ class SecurityControllerTest extends WebTestCase
         $this->assertResponseRedirects('/', 302);
     }
 
+    public function testLogout(): void
+    {
+        $client = static::createClient();
+        $userRepository = static::$container->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['username' => 'username 0']);
+        $client->loginUser($testUser);
+        $crawler = $client->request('GET', '/logout');
+
+        $this->assertResponseRedirects('', 302);
+    }
+
 }
