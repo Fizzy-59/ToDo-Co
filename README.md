@@ -40,4 +40,3 @@ Application to manage daily tasks.
  - php bin/console doctrine:fixtures:load --env=test
  - php bin/console doctrine:database:create --env=test
  - php bin/console doctrine:schema:update --force --env=test
-

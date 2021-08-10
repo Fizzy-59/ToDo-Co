@@ -27,7 +27,7 @@ class TaskController extends AbstractController
      * @return RedirectResponse|Response
      */
     #[Route('/tasks/create', name: "task_create")]
-    public function createTask(Request $request)
+    public function createTask(Request $request): RedirectResponse|Response
     {
         $user = $this->getUser();
         $task = new Task();
@@ -56,7 +56,7 @@ class TaskController extends AbstractController
      * @return RedirectResponse|Response
      */
     #[Route('/tasks/{id}/edit', name: "task_edit")]
-    public function editTask(Task $task, Request $request)
+    public function editTask(Task $task, Request $request): RedirectResponse|Response
     {
         $form = $this->createForm(TaskType::class, $task);
 
