@@ -33,10 +33,12 @@ Application to manage daily tasks.
 
 ### Testing
  - source ~/.bash_profile
- - php8 /usr/local/bin/phpunit
- - php8 -d memory_limit=5G /usr/local/bin/phpunit
+ - php /usr/local/bin/phpunit
+ - php -d memory_limit=5G /usr/local/bin/phpunit
  - php -dxdebug.mode=coverage bin/phpunit --coverage-clover='reports/coverage/coverage.xml' --coverage-html='reports/coverage'
 
  - php bin/console doctrine:fixtures:load --env=test
  - php bin/console doctrine:database:create --env=test
  - php bin/console doctrine:schema:update --force --env=test
+
+ - php bin/console  cache:clear -e test
